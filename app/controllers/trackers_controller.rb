@@ -41,13 +41,15 @@ class TrackersController < OpenReadController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_tracker
-      @tracker = Tracker.where(id: params[:id], user: current_user).take
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def tracker_params
-      params.require(:tracker).permit(:first_name, :string, :last_name, :grade, :comments)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_tracker
+    @tracker = Tracker.where(id: params[:id], user: current_user).take
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def tracker_params
+    params.require(:tracker).permit(:first_name, :last_name, :grade,
+                   :comments)
+  end
 end
