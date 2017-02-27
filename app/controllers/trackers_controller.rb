@@ -1,10 +1,11 @@
-class TrackersController < ApplicationController
+# frozen_string_literal: true
+
+class TrackersController < OpenReadController
   before_action :set_tracker, only: [:show, :update, :destroy]
 
   # GET /trackers
   def index
-    @trackers = Tracker.all
-
+    @trackers = current_user.trackers
     render json: @trackers
   end
 
@@ -15,10 +16,10 @@ class TrackersController < ApplicationController
 
   # POST /trackers
   def create
-    @tracker = Tracker.new(tracker_params)
+    @tracker = current_user.trackers.build(tracker_params)
 
     if @tracker.save
-      render json: @tracker, status: :created, location: @tracker
+      render json: @tracker, status: :created
     else
       render json: @tracker.errors, status: :unprocessable_entity
     end
@@ -36,12 +37,13 @@ class TrackersController < ApplicationController
   # DELETE /trackers/1
   def destroy
     @tracker.destroy
+    head :no_content
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_tracker
-      @tracker = Tracker.find(params[:id])
+      @tracker = Tracker.where(id: params[:id], user: current_user).take
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170227174304) do
+ActiveRecord::Schema.define(version: 20170227183646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(version: 20170227174304) do
 
   create_table "trackers", force: :cascade do |t|
     t.string   "first_name"
-    t.string   "string"
     t.string   "last_name"
     t.string   "grade"
     t.string   "comments"
