@@ -1,300 +1,276 @@
-[![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
+# A Counselor Notepad (formerly BOSS) data store API
 
-# rails-api-template
+An API to store notes and track students
+It allows users to CRUD on student notes.
 
-A template for starting projects with `rails-api`. Includes authentication.
+Link to the front-end documentation: https://spw5235.github.io/boss-project-front-end/
+Link to the live application: https://spw5235.github.io/student-tracker-front-end/
 
-At the beginning of each cohort, update the versions in [`Gemfile`](Gemfile).
+## ORM
+The relationship of this api is one to many.  That is, one user can have many notes.  For a visualization of this relationship, view the following link: https://goo.gl/S3jndc.
 
-## Dependencies
+## API end-points
 
-Install with `bundle install`.
+| Verb   |             URI Pattern            |    Controller#Action     |
+|--------|------------------------------------|--------------------------|
+| POST   |              `/sign-up`            |    `users#signup`        |
+| POST   |             `/sign-in`             |    `users#signin`        |
+| DELETE |           `/sign-out/:id`          |    `users#signout`       |
+| PATCH  |       `/change-password/:id`       |    `users#changepw`      |
+| GET    |            `/trackers`             |    `trackers#index`      |
+| GET    |          `/trackers/:id`           |    `trackers#show`       |
+| POST   |            `/trackers`             |    `trackers#create`     |
+| PATCH  |          `/trackers/:id`           |    `trackers#update`     |
+| DELETE |          `/trackers/:id`           |    `trackers#destroy`    |
 
--   [`rails-api`](https://github.com/rails-api/rails-api)
--   [`rails`](https://github.com/rails/rails)
--   [`active_model_serializers`](https://github.com/rails-api/active_model_serializers)
--   [`ruby`](https://www.ruby-lang.org/en/)
--   [`postgres`](http://www.postgresql.org)
 
-Until Rails 5 is released, this template should follow the most recent released
-version of Rails 4, as well as track `master` branches for `rails-api` and
-`active_model_serializers`.
+All data returned from API actions is formatted as JSON.
 
-## Installation
+---
 
-1.  [Download](../../archive/master.zip) this template.
-1.  Unzip and rename the template directory.
-1.  Empty [`README.md`](README.md) and fill with your own content.
-1.  Move into the new project and `git init`.
-1.  Install dependencies with `bundle install`.
-1.  Rename your app module in `config/application.rb` (change
-    `RailsApiTemplate`).
-1.  Rename your project database in `config/database.yml` (change
-    `'rails-api-template'`).
-1.  Create a `.env` for sensitive settings (`touch .env`).
-1.  Generate new `development` and `test` secrets (`bundle exec rake secret`).
-1.  Store them in `.env` with keys `SECRET_KEY_BASE_<DEVELOPMENT|TEST>`
-    respectively.
-1.  In order to make requests to your deployed API, you will need to set
-    `SECRET_KEY_BASE` in the environment of the production API (using `heroku
-    config:set` or the Heroku dashboard).
-1.  In order to make requests from your deployed client application, you will
-    need to set `CLIENT_ORIGIN` in the environment of the production API (e.g.
-    `heroku config:set CLIENT_ORIGIN https://<github-username>.github.io`).
-1.  Setup your database with `bin/rake db:nuke_pave` or `bundle exec rake
-    db:nuke_pave`.
-1.  Run the API server with `bin/rails server` or `bundle exec rails server`.
+## User actions
 
-## Structure
+*Summary:*
 
-This template follows the standard project structure in Rails 4.
+### signup
 
-`curl` command scripts are stored in [`scripts`](scripts) with names that
-correspond to API actions.
+The `create` action expects a *POST* of `credentials` identifying a new user to
+ create, e.g. using `getFormFields`:
 
-User authentication is built-in.
+```html
+<form>
+  <input name="credentials[email]" type="text" value="an@example.email">
+  <input name="credentials[password]" type="password" value="an example password">
+  <input name="credentials[password_confirmation]" type="password" value="an example password">
+</form>
 
-## Tasks
-
-Developers should run these often!
-
--   `bin/rake routes` lists the endpoints available in your API.
--   `bin/rake test` runs automated tests.
--   `bin/rails console` opens a REPL that pre-loads the API.
--   `bin/rails db` opens your database client and loads the correct database.
--   `bin/rails server` starts the API.
--   `scripts/*.sh` run various `curl` commands to test the API. See below.
-
-<!-- TODO -   `rake nag` checks your code style. -->
-<!-- TODO -   `rake lint` checks your code for syntax errors. -->
-
-## API
-
-Use this as the basis for your own API documentation. Add a new third-level
-heading for your custom entities, and follow the pattern provided for the
-built-in user authentication documentation.
-
-Scripts are included in [`scripts`](scripts) to test built-in actions. Add your
-own scripts to test your custom API. As an alternative, you can write automated
-tests in RSpec to test your API.
-
-### Authentication
-
-| Verb   | URI Pattern            | Controller#Action |
-|--------|------------------------|-------------------|
-| POST   | `/sign-up`             | `users#signup`    |
-| POST   | `/sign-in`             | `users#signin`    |
-| PATCH  | `/change-password/:id` | `users#changepw`  |
-| DELETE | `/sign-out/:id`        | `users#signout`   |
-
-#### POST /sign-up
-
-Request:
-
-```sh
-curl http://localhost:4741/sign-up \
-  --include \
-  --request POST \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'",
-      "password_confirmation": "'"${PASSWORD}"'"
-    }
-  }'
 ```
 
-```sh
-EMAIL=ava@bob.com PASSWORD=hannah scripts/sign-up.sh
-```
+or using `JSON`:
 
-Response:
-
-```md
-HTTP/1.1 201 Created
-Content-Type: application/json; charset=utf-8
-
+```json
 {
-  "user": {
-    "id": 1,
-    "email": "ava@bob.com"
+  "credentials": {
+    "email": "an@example.email",
+    "password": "an example password",
+    "password_confirmation": "an example password"
   }
 }
 ```
 
-#### POST /sign-in
+The `password_confirmation` field is optional.
 
-Request:
+If the request is successful, the response will have an HTTP Status of 201,
+ Created, and the body will be JSON containing the `id` and `email` of the new
+ user, e.g.:
 
-```sh
-curl http://localhost:4741/sign-in \
-  --include \
-  --request POST \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'"
-    }
-  }'
-```
-
-```sh
-EMAIL=ava@bob.com PASSWORD=hannah scripts/sign-in.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
+```json
 {
   "user": {
     "id": 1,
-    "email": "ava@bob.com",
-    "token": "BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f"
+    "email": "an@example.email"
   }
 }
 ```
 
-#### PATCH /change-password/:id
+If the request is unsuccessful, the response will have an HTTP Status of 400 Bad
+ Request, and the response body will be empty.
 
-Request:
+### signin
 
-```sh
-curl --include --request PATCH "http://localhost:4741/change-password/$ID" \
-  --header "Authorization: Token token=$TOKEN" \
-  --header "Content-Type: application/json" \
-  --data '{
-    "passwords": {
-      "old": "'"${OLDPW}"'",
-      "new": "'"${NEWPW}"'"
-    }
-  }'
+The `signin` action expects a *POST* with `credentials` identifying a previously
+ registered user, e.g.:
+
+```html
+<form>
+  <input name="credentials[email]" type="text" value="an@example.email">
+  <input name="credentials[password]" type="password" value="an example password">
+</form>
 ```
 
-```sh
-ID=1 OLDPW=hannah NEWPW=elle TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f scripts/change-password.sh
-```
+or:
 
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
-
-#### DELETE /sign-out/:id
-
-Request:
-
-```sh
-curl http://localhost:4741/sign-out/$ID \
-  --include \
-  --request DELETE \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-ID=1 TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f scripts/sign-out.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
-
-### Users
-
-| Verb | URI Pattern | Controller#Action |
-|------|-------------|-------------------|
-| GET  | `/users`    | `users#index`     |
-| GET  | `/users/1`  | `users#show`      |
-
-#### GET /users
-
-Request:
-
-```sh
-curl http://localhost:4741/users \
-  --include \
-  --request GET \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f scripts/users.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
+```json
 {
-  "users": [
-    {
-      "id": 2,
-      "email": "bob@ava.com"
-    },
+  "credentials": {
+    "email": "an@example.email",
+    "password": "an example password"
+  }
+}
+```
+
+If the request is successful, the response will have an HTTP Status of 200 OK,
+ and the body will be JSON containing the user's `id`, `email`, and the `token`
+ used to authenticate other requests, e.g.:
+
+```json
+{
+  "user": {
+    "id": 1,
+    "email": "an@example.email",
+    "token": "an example authentication token"
+  }
+}
+```
+
+If the request is unsuccessful, the response will have an HTTP Status of 401
+ Unauthorized, and the response body will be empty.
+
+### signout
+
+The `signout` actions is a *DELETE* specifying the `id` of the user to sign out.
+
+If the request is successful the response will have an HTTP status of 204 No
+ Content.
+
+If the request is unsuccessful, the response will have a status of 401
+ Unauthorized.
+
+### changepw
+
+The `changepw` action expects a PATCH of `passwords` specifying the `old` and
+ `new`.
+
+If the request is successful the response will have an HTTP status of 204 No
+ Content.
+
+If the request is unsuccessful the reponse will have an HTTP status of 400 Bad
+ Request.
+
+---
+
+The `sign-out` and `change-password` requests must include a valid HTTP header
+ `Authorization: Token token=<token>` or they will be rejected with a status of
+ 401 Unauthorized.
+
+## Note actions
+
+All note action requests must include a valid HTTP header `Authorization: Token
+ token=<token>` or they will be rejected with a status of 401 Unauthorized.
+
+All notes are associated with a user and the values for first_name, last_name, grade, and comments are all strings.
+
+### index
+
+The `index` action is a *GET* that retrieves all the notes associated with a
+ user.
+The response body will contain JSON containing an array of notes, e.g.:
+
+```json
+{
+  "trackers": [
     {
       "id": 1,
-      "email": "ava@bob.com"
+      "first_name": "Eric",
+      "last_name": "Defeo",
+      "grade": "3",
+      "comments": "Nam vehicula ultricies elit, fringilla varius eros vulputate id. Duis sem velit, pharetra id neque ac, fringilla convallis purus. Vestibulum accumsan diam ante, non gravida velit commodo ut"
+    },
+    {
+      "id": 2,
+      "first_name": "Jeff",
+      "last_name": "Keogh",
+      "grade": "4",
+      "comments": "Nam vehicula ultricies elit, fringilla varius eros vulputate id. Duis sem velit, pharetra id neque ac, fringilla convallis purus. Vestibulum accumsan diam ante, non gravida velit commodo ut"
     }
   ]
 }
 ```
 
-#### GET /users/:id
+If there are no notes associated with the user, the response body will contain
+ an empty notes array, e.g.:
 
-Request:
-
-```sh
-curl --include --request GET http://localhost:4741/users/$ID \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-ID=2 TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f scripts/user.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
+```json
 {
-  "user": {
-    "id": 2,
-    "email": "bob@ava.com"
-  }
+  "trackers": [
+  ]
 }
 ```
 
-### Reset Database without dropping
+### show
 
-This is not a task developers should run often, but it is sometimes necessary.
+The `show` action is a *GET* specifing the `id` of the note to retrieve.
+If the request is successful the status will be 200, OK, and the response body
+ will contain JSON for the note requested, e.g.:
 
-**locally**
-
-```sh
-bin/rake db:migrate VERSION=0
-bin/rake db:migrate db:seed db:examples
+```json
+{
+  "tracker": {
+      "id": 1,
+      "first_name": "Eric",
+      "last_name": "Defeo",
+      "grade": "3",
+      "comments": "Nam vehicula ultricies elit, fringilla varius eros vulputate id. Duis sem velit, pharetra id neque ac, fringilla convallis purus. Vestibulum accumsan diam ante, non gravida velit commodo ut"
+    }
+}
 ```
 
-**heroku**
+### create
 
-```sh
-heroku run rake db:migrate VERSION=0
-heroku run rake db:migrate db:seed db:examples
+Below is a sample for a create form's HTML:
+
+```html
+<form id="new-note" name="new-note-form">
+    <fieldset>
+      <p class="field-description">First Name</p>
+      <input name="tracker[first_name]" placeholder="First Name" type="text">
+      <p class="field-description">Last Name</p>
+      <input name="tracker[last_name]" placeholder="Last Name" type="text">
+      <p class="field-description">Grade</p>
+      <input name="tracker[grade]" placeholder="Grade" type="text">
+      <p class="field-description">Note</p>
+      <textarea name="tracker[comments]" placeholder="Note"></textarea>
+      <br>
+      <input class="submit-btn" name="submit" id="create-btn" type="submit" value="Submit">
+    </fieldset>
+  </form>
 ```
 
-## [License](LICENSE)
 
-1.  All content is licensed under a CC­BY­NC­SA 4.0 license.
-1.  All software code is licensed under GNU GPLv3. For commercial use or
-    alternative licensing, please contact legal@ga.co.
+### Update
+
+This `update` action is a *PATCH* specifying the id of the note to retrieve. If the request is successful, the response will have an HTTP Status of 200 OK, and the body will be JSON containing the note, e.g.:
+
+```json
+{
+  "tracker": {
+      "id": 1,
+      "first_name": "Eric",
+      "last_name": "Defeo",
+      "grade": "3",
+      "comments": "Nam vehicula ultricies elit, fringilla varius eros vulputate id. Duis sem velit, pharetra id neque ac, fringilla convallis purus. Vestibulum accumsan diam ante, non gravida velit commodo ut"
+    }
+}
+```
+
+Below is the html for a sample update form:
+
+```html
+<form id="update-form" name="update-form">
+    <fieldset>
+      <input name="tracker[id]" id="update-tracker-id" placeholder="Tracker ID" type="text">
+      <br>
+      <p class="field-description">First Name</p>
+      <input name="tracker[first_name]" placeholder="First Name" type="text">
+      <br>
+      <p class="field-description">Last Name</p>
+      <input name="tracker[last_name]" placeholder="Last Name" type="text">
+      <br>
+      <p class="field-description">Grade</p>
+      <input name="tracker[grade]" placeholder="Grade" type="text">
+      <br>
+      <p class="field-description">Note</p>
+      <textarea name="tracker[comments]" placeholder="Comments"></textarea>
+      <br>
+      <input class="submit-btn" name="submit" type="submit" value="Submit">
+    </fieldset>
+  </form>
+```
+
+### Destroy
+
+The `destroy` action is a *DELETE* specifying the `id` of the note to delete.
+
+If the request is successful the response will have an HTTP status of 204 No Content.
+
+If the request is unsuccessful, the response will have a status of 500.
