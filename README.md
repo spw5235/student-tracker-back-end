@@ -1,7 +1,6 @@
 # Counselor Notepad (formerly BOSS) data store API
 
-An API to store notes and track students
-It allows users to CRUD on student notes.
+An API to store notes and track students.  The API allows users to CRUD on student notes.
 
 Link to the live application: [https://spw5235.github.io/boss-project-front-end/](https://spw5235.github.io/boss-project-front-end/).
 
