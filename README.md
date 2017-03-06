@@ -1,10 +1,11 @@
-# A Counselor Notepad (formerly BOSS) data store API
+# Counselor Notepad (formerly BOSS) data store API
 
 An API to store notes and track students
 It allows users to CRUD on student notes.
 
-Link to the front-end documentation: https://spw5235.github.io/boss-project-front-end/
-Link to the live application: https://spw5235.github.io/student-tracker-front-end/
+Link to the live application: [https://spw5235.github.io/boss-project-front-end/](https://spw5235.github.io/boss-project-front-end/).
+
+Link to the front-end repository: [https://github.com/spw5235/boss-project-front-end](https://github.com/spw5235/boss-project-front-end).
 
 ## ORM
 The relationship of this api is one to many.  That is, one user can have many notes.  For a visualization of this relationship, view the following link: https://goo.gl/S3jndc.
@@ -207,7 +208,7 @@ If the request is successful the status will be 200, OK, and the response body
 
 ### create
 
-Below is a sample for a create form's HTML:
+Below is the html for a sample create form:
 
 ```html
 <form id="new-note" name="new-note-form">
@@ -227,7 +228,7 @@ Below is a sample for a create form's HTML:
 ```
 
 
-### Update
+### update
 
 This `update` action is a *PATCH* specifying the id of the note to retrieve. If the request is successful, the response will have an HTTP Status of 200 OK, and the body will be JSON containing the note, e.g.:
 
